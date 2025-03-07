@@ -23,7 +23,7 @@ module.exports = {
             await handleMessage(sock, msg, commandName, args);
         } else {
             // Comando inválido
-            const responseText = `❌ Esse comando não existe, tente ${PREFIX}menu para ver todos os comandos disponíveis.`;
+            const responseText = `❌ Esse comando não existe!!\nVerifique se digitou corretamente ou tente "${PREFIX}menu" para ver todos os comandos disponíveis.`;
             await sock.sendMessage(chatId, { text: responseText }, { quoted: msg });
         }
     }
