@@ -54,8 +54,11 @@ async function startBot() {
         console.log(`Executando comando: ${commandName}`);
 
         const { handleMessage } = require("./handlers");
-        await handleMessage(sock, msg, commandName, args);
+        await onMessage(sock, msg, PREFIX);
     });
+
+    const { onMessage } = require("./events"); // Importa a função de onMessage
+
 }
 
 startBot();
