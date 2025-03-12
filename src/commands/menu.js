@@ -5,16 +5,29 @@ require('dotenv').config();
 // Carrega o prefixo a partir do arquivo .env
 const PREFIX = process.env.PREFIX || "!";
 
+// Função para obter os comandos, sem incluir as pastas no nome
+function getCommands(dir, prefix = "") {
+    let commands = [];
+    fs.readdirSync(dir).forEach(file => {
+        const fullPath = path.join(dir, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+            // Se for uma pasta, percorre as subpastas
+            commands.push(...getCommands(fullPath, "")); // Remover prefixo da subpasta
+        } else if (file.endsWith(".js")) {
+            // Adiciona o comando com o prefixo, mas sem a parte da subpasta
+            const commandName = file.replace(".js", "");
+            commands.push(`${PREFIX}${commandName}`);
+        }
+    });
+    return commands;
+}
+
 module.exports = {
     name: "menu",
     execute: async (sock, msg) => {
         const chatId = msg.key.remoteJid;
-
-        // Carrega todos os comandos disponíveis na pasta "commands"
-        const commandFiles = fs.readdirSync(path.join(__dirname)).filter(file => file.endsWith(".js"));
-
-        // Formata a lista de comandos
-        let commandList = commandFiles.map(file => `➤ *${PREFIX}${file.replace(".js", "")}*`).join("\n");
+        const commandsDir = path.join(__dirname, "../commands");
+        const commandList = getCommands(commandsDir).map(cmd => `➤ *${cmd}*`).join("\n");
 
         let menuText = `┏━❰ 🌸 𝗠𝗘𝗡𝗨 𝗗𝗔 𝗧𝗘𝗧𝗢 🌸 ❱━┓
 ┃
